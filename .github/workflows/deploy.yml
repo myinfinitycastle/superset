@@ -3,7 +3,7 @@ name: Deploy Infrastructure using CloudFormation
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
