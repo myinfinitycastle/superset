@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: AWS_CREDENTIAL  
+    environment: AWS_CREDENTIAL
 
     steps:
     - name: Checkout code
@@ -32,7 +32,16 @@ jobs:
             SubnetId2=${{ secrets.AWS_SUBNET_ID_2 }} \
           --capabilities CAPABILITY_IAM
 
+    - name: Get failure reason
+      if: failure()
+      run: |
+        aws cloudformation describe-stack-events \
+          --stack-name my-alb-stack \
+          --query 'StackEvents[?ResourceStatus==`CREATE_FAILED`].ResourceStatusReason' \
+          --output text
+
     - name: Get ALB DNS name
+      if: success()
       run: |
         aws cloudformation describe-stacks \
           --stack-name my-alb-stack \
